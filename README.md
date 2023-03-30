@@ -16,3 +16,15 @@ options:
   --cert-chain CERT_CHAIN
 ```
 
+## Dashboard
+
+The following paths should be the location of the output files from `run.py`.
+
+```
+let path1 = './ap.json';
+let path1_prev = './ap.prev.json';
+let path2 = './rrm.json';
+```
+
+This project is ongoing and the configuration script will be provided in future.
+

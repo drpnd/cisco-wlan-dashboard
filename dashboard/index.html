@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>AP Dashboard</title>
+<meta name="Author" content="Hirochika Asai." />
+<meta name="copyright" content="(c) 2023 Hirochika Asai.  All rights reserved." />
+<style>
+body {
+    font: 10px sans-serif;
+}
+div.apbox {
+    margin: 0;
+    padding: 0;
+    width: 200px;
+    height: 100px;
+    float: left;
+    border: 2px solid #333333;
+}
+div.aptitle {
+    margin: 0;
+    padding: 0;
+    width: 200px;
+    height: 20px;
+    font-weight: bolder;
+    color: white;
+    background-color: #333333;
+    font-size: 15px;
+}
+div.apslot {
+    margin: 0;
+    padding: 0;
+    width: 100px;
+    height: 80px;
+    float: left;
+    text-align: right;
+    font-size: 15px;
+}
+div.apchannel {
+    padding-right: 5px;
+    text-align: right;
+}
+div.apassocs {
+    padding: 2px;
+    text-align: center;
+    font-size: 25px;
+}
+div.apstats {
+    padding-left: 5px;
+    text-align: left;
+    font-size: 12px;
+    color: #333333;
+}
+div.apslot-down {
+    background-color: #555555;
+}
+div.apslot-load-high {
+    background-color: #ff9999;
+}
+div.apslot-load-low {
+    background-color: #9999ff;
+}
+div.apstats-high {
+    background-color: #ff0000;
+    color: #ffffff;
+}
+</style>
+<script>
+
+let path1 = './ap.json';
+let path1_prev = './ap.prev.json';
+let path2 = './rrm.json';
+let intervalTimer;
+let APs = {};
+let sortedAPs = [];
+
+/*
+ * Initialize the dashboard
+ */
+function init() {
+    update();
+    intervalTiemr = setInterval(update, 60000);
+}
+
+/*
+ * Render the dashboard
+ */
+function render(sortedAPs, APs) {
+
+    let dashboard = document.getElementById('dashboard');
+
+    // Clear
+    dashboard.innerHTML = '';
+
+    // Render all APs
+    for( let i in sortedAPs ) {
+        let mac = sortedAPs[i];
+        let elem = document.createElement('div');
+        elem.className = 'apbox'
+        let elem_title = document.createElement('div');
+        elem_title.className = 'aptitle';
+        elem_title.innerText = APs[mac]['name'] + ' @ ' + APs[mac]['location'];
+        elem.appendChild(elem_title);
+        let elem_slot0 = document.createElement('div');
+        elem_slot0.className = 'apslot';
+        let elem_slot1 = document.createElement('div');
+        elem_slot1.className = 'apslot';
+
+        renderSlot(0, APs[mac]['slots'][0], elem_slot0);
+        renderSlot(1, APs[mac]['slots'][1], elem_slot1);
+
+        elem.appendChild(elem_slot0);
+        elem.appendChild(elem_slot1);
+
+        let oelem = document.createElement('div');
+        oelem.className = 'apobox';
+        oelem.appendChild(elem);
+
+        dashboard.appendChild(oelem);
+    }
+}
+function renderSlot(slot, slotinfo, elem) {
+    if ( slotinfo !== undefined ) {
+        // Radio operational status
+        if ( slotinfo['state'] == 'radio-down' ) {
+            elem.className += ' apslot-down';
+        } else if ( slotinfo['aid-user'] >= 50 ) {
+            elem.className += ' apslot-load-high';
+        } else {
+            elem.className += ' apslot-load-low';
+        }
+
+        // Channel
+        let elem_channel = document.createElement('div');
+        elem_channel.innerText = slotinfo['channel'] + ' (' + slotinfo['width'] + ')';
+        elem_channel.className = 'apchannel';
+        let elem_assocs = document.createElement('div');
+        elem_assocs.innerText = slotinfo['aid-user'];
+        elem_assocs.className = 'apassocs'
+
+        // Stats
+        let elem_stats = document.createElement('div');
+        let tx_error = slotinfo['failed-count'] - slotinfo['prev-failed-count'];
+        let tx = slotinfo['tx-frame-count'] - slotinfo['prev-tx-frame-count'] + 0.01;
+        elem_stats.className = 'apstats';
+        elem_stats.innerHTML = 'Tx error: ' + Math.round(100 * tx_error / tx) + '%<br/>'
+            + 'Util: ' + slotinfo['load']['tx'] + '/' + slotinfo['load']['rx'] + '/'
+            + slotinfo['load']['cca'] + '/' + slotinfo['load']['rx-noise'];
+        if ( tx_error / tx >= 0.1 || slotinfo['load']['cca'] >= 50.0 ) {
+            elem_stats.className += ' apstats-high';
+        }
+
+        elem.appendChild(elem_channel);
+        elem.appendChild(elem_assocs);
+        elem.appendChild(elem_stats);
+
+    } else {
+        elem.className += ' apslot-down';
+    }
+}
+
+/*
+ * Update the dashboard information
+ */
+async function update() {
+    APs = {};
+    sortedAPs = [];
+
+    let response;
+    let json;
+
+    // Trying to get the AP
+    response = await fetch(path1);
+    json = await response.json();
+
+    // Get AP's mac address list
+    for ( let k in json['ap-name-mac-map'] ) {
+        sortedAPs.push(json['ap-name-mac-map'][k]['wtp-mac']);
+        APs[json['ap-name-mac-map'][k]['wtp-mac']] = {'name': json['ap-name-mac-map'][k]['wtp-name']};
+    }
+
+    // Get the location information
+    for ( let k in json['capwap-data'] ) {
+        if  ( json['capwap-data'][k]['wtp-mac'] in APs ) {
+            APs[json['capwap-data'][k]['wtp-mac']]['location'] = json['capwap-data'][k]['ap-location']['location'];
+        }
+    }
+
+    // Get the radio operation data
+    for ( let k in json['radio-oper-data'] ) {
+        if  ( json['radio-oper-data'][k]['wtp-mac'] in APs ) {
+            if ( APs[json['radio-oper-data'][k]['wtp-mac']]['slots'] === undefined ) {
+                APs[json['radio-oper-data'][k]['wtp-mac']]['slots'] = {};
+            }
+            APs[json['radio-oper-data'][k]['wtp-mac']]['slots'][json['radio-oper-data'][k]['radio-slot-id']] = {
+                'state': json['radio-oper-data'][k]['oper-state'],
+                'band': json['radio-oper-data'][k]['current-active-band'],
+                'antenna-gain': json['radio-oper-data'][k]['antenna-gain'],
+                'channel': json['radio-oper-data'][k]['phy-ht-cfg']['cfg-data']['curr-freq'],
+                'width': json['radio-oper-data'][k]['phy-ht-cfg']['cfg-data']['chan-width']
+            };
+        }
+    }
+
+    // Get the radio operation statistics
+    for ( let k in json['radio-oper-stats'] ) {
+        let k1 = json['radio-oper-stats'][k]['ap-mac'];
+        let k2 = json['radio-oper-data'][k]['radio-slot-id'];
+        if  ( k1 in APs ) {
+            if ( APs[k1]['slots'] === undefined ) {
+                APs[k1]['slots'] = {};
+            }
+            APs[k1]['slots'][k2]['aid-user'] = json['radio-oper-stats'][k]['aid-user-list'];
+            APs[k1]['slots'][k2]['failed-count'] = json['radio-oper-stats'][k]['failed-count'];
+            APs[k1]['slots'][k2]['fcs-error-count'] = json['radio-oper-stats'][k]['fcs-error-count'];
+            APs[k1]['slots'][k2]['tx-frame-count'] = json['radio-oper-stats'][k]['tx-frame-count'];
+        }
+    }
+
+    // Trying to get the AP (previous data to make diff)
+    response = await fetch(path1_prev);
+    json = await response.json();
+
+    for ( let k in json['radio-oper-stats'] ) {
+        let k1 = json['radio-oper-stats'][k]['ap-mac'];
+        let k2 = json['radio-oper-data'][k]['radio-slot-id'];
+        if  ( k1 in APs ) {
+            if ( APs[k1]['slots'] === undefined ) {
+                APs[k1]['slots'] = {};
+            }
+            APs[k1]['slots'][k2]['prev-failed-count'] = json['radio-oper-stats'][k]['failed-count'];
+            APs[k1]['slots'][k2]['prev-fcs-error-count'] = json['radio-oper-stats'][k]['fcs-error-count'];
+            APs[k1]['slots'][k2]['prev-tx-frame-count'] = json['radio-oper-stats'][k]['tx-frame-count'];
+        }
+    }
+
+    // Get RRM information
+    response = await fetch(path2);
+    json = await response.json();
+
+    for ( let k in json['rrm-measurement'] ) {
+        let k1 = json['rrm-measurement'][k]['wtp-mac'];
+        let k2 = json['rrm-measurement'][k]['radio-slot-id'];
+        if ( APs[k1]['slots'][k2] === undefined ) {
+            continue;
+        }
+        APs[k1]['slots'][k2]['load'] = {
+            'tx': json['rrm-measurement'][k]['load']['tx-util-percentage'],
+            'rx': json['rrm-measurement'][k]['load']['rx-util-percentage'],
+            'cca': json['rrm-measurement'][k]['load']['cca-util-percentage'],
+            'rx-noise': json['rrm-measurement'][k]['load']['rx-noise-channel-utilization']
+        };
+    }
+
+    // Render
+    render(sortedAPs, APs);
+}
+
+window.addEventListener('load', init);
+
+
+</script>
+</head>
+<body>
+
+<h1>AP Dashboard</h1>
+
+<div id="dashboard">
+</div>
+
+</body>
+</html>
+

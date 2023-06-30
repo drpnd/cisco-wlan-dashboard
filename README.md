@@ -16,6 +16,10 @@ options:
   --cert-chain CERT_CHAIN
 ```
 
+* HOST specifies the target wireless LAN controller hostname or IP address
+* PORT specifies the port number to the streaming telemetry API (gNMI)
+
+
 ## Dashboard
 
 The following paths should be the location of the output files from `run.py`.

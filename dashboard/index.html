@@ -132,7 +132,7 @@ function renderSlot(slot, slotinfo, elem) {
 
         // Channel
         let elem_channel = document.createElement('div');
-        elem_channel.innerText = slotinfo['channel'] + ' (' + slotinfo['width'] + ')';
+        elem_channel.innerText = slotinfo['channel'] + ' (' + slotinfo['width'] + ')' + ' / ' + slotinfo['tx-power-dbm'] + ' dbm';
         elem_channel.className = 'apchannel';
         let elem_assocs = document.createElement('div');
         elem_assocs.innerText = slotinfo['aid-user'];
@@ -197,7 +197,8 @@ async function update() {
                 'band': json['radio-oper-data'][k]['current-active-band'],
                 'antenna-gain': json['radio-oper-data'][k]['antenna-gain'],
                 'channel': json['radio-oper-data'][k]['phy-ht-cfg']['cfg-data']['curr-freq'],
-                'width': json['radio-oper-data'][k]['phy-ht-cfg']['cfg-data']['chan-width']
+                'width': json['radio-oper-data'][k]['phy-ht-cfg']['cfg-data']['chan-width'],
+                'tx-power-dbm': json['radio-oper-data'][k]['radio-band-info'][0]['phy-tx-pwr-lvl-cfg']['cfg-data']['curr-tx-power-in-dbm']
             };
         }
     }

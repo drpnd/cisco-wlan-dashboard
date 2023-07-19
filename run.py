@@ -109,7 +109,7 @@ def main():
                     with open(file_path, mode='w') as f:
                         f.write(js)
                     try:
-                        os.rename(rrm_path, rrm_prev_path)
+                        os.rename(ap_path, ap_prev_path)
                     except OSError as e:
                         if e.errno == errno.ENOENT:
                             pass

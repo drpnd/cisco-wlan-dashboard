@@ -66,6 +66,8 @@ def symlink_overwrite(f1, f2):
         if e.errno == errno.EEXIST:
             os.remove(f2)
             os.symlink(f1, f2)
+        else:
+            raise e
 
 """
 Main routine
@@ -89,7 +91,13 @@ def main():
                     rrm_prev_path = '%s/rrm.prev.json' % databasedir
                     with open(file_path, mode='w') as f:
                         f.write(js)
-                    os.rename(rrm_path, rrm_prev_path)
+                    try:
+                        os.rename(rrm_path, rrm_prev_path)
+                    except OSError as e:
+                        if e.errno == errno.ENOENT:
+                            pass
+                        else:
+                            raise
                     symlink_overwrite(os.path.relpath(file_path, databasedir), rrm_path)
                 ## AP
                 elif um.path.elem[0].name == 'Cisco-IOS-XE-wireless-access-point-oper:access-point-oper-data':
@@ -100,7 +108,13 @@ def main():
                     ap_prev_path = '%s/ap.prev.json' % databasedir
                     with open(file_path, mode='w') as f:
                         f.write(js)
-                    os.rename(ap_path, ap_prev_path)
+                    try:
+                        os.rename(rrm_path, rrm_prev_path)
+                    except OSError as e:
+                        if e.errno == errno.ENOENT:
+                            pass
+                        else:
+                            raise
                     symlink_overwrite(os.path.relpath(file_path, databasedir), ap_path)
 
 if __name__ == "__main__":

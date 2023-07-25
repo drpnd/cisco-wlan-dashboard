@@ -125,6 +125,8 @@ function renderSlot(slot, slotinfo, elem) {
         // Radio operational status
         if ( slotinfo['state'] == 'radio-down' ) {
             elem.className += ' apslot-down';
+        } else if ( slotinfo['mode'] == 'radio-mode-monitor' ) {
+            elem.className += ' apslot-down';
         } else if ( slotinfo['aid-user'] >= 50 ) {
             elem.className += ' apslot-load-high';
         } else {
@@ -195,6 +197,7 @@ async function update() {
             }
             APs[json['radio-oper-data'][k]['wtp-mac']]['slots'][json['radio-oper-data'][k]['radio-slot-id']] = {
                 'state': json['radio-oper-data'][k]['oper-state'],
+                'mode': json['radio-oper-data'][k]['radio-mode'],
                 'band': json['radio-oper-data'][k]['current-active-band'],
                 'antenna-gain': json['radio-oper-data'][k]['antenna-gain'],
                 'channel': json['radio-oper-data'][k]['phy-ht-cfg']['cfg-data']['curr-freq'],

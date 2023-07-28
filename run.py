@@ -73,7 +73,7 @@ def symlink_overwrite(f1, f2):
 Main routine
 """
 def main():
-    xpaths = ['Cisco-IOS-XE-wireless-rrm-oper:rrm-oper-data', 'Cisco-IOS-XE-wireless-access-point-oper:access-point-oper-data']
+    xpaths = ['Cisco-IOS-XE-wireless-rrm-oper:rrm-oper-data', 'Cisco-IOS-XE-wireless-access-point-oper:access-point-oper-data/radio-oper-data']
 
     for msg in client.subscribe_xpaths(xpaths, encoding="JSON_IETF", sample_interval=(10**9) * interval, sub_mode='SAMPLE'):
         if msg.sync_response:
@@ -100,7 +100,7 @@ def main():
                             raise
                     symlink_overwrite(os.path.relpath(file_path, databasedir), rrm_path)
                 ## AP
-                elif um.path.elem[0].name == 'Cisco-IOS-XE-wireless-access-point-oper:access-point-oper-data/radio-oper-data':
+                elif um.path.elem[0].name == 'Cisco-IOS-XE-wireless-access-point-oper:access-point-oper-data':
                     jm = json.loads(um.val.json_ietf_val)
                     js = json.dumps(jm, indent=2)
                     file_path = '%s/ap/%s' % (databasedir, fname)

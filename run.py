@@ -73,7 +73,7 @@ def symlink_overwrite(f1, f2):
 Main routine
 """
 def main():
-    xpaths = ['Cisco-IOS-XE-wireless-rrm-oper:rrm-oper-data', 'Cisco-IOS-XE-wireless-access-point-oper:access-point-oper-data/radio-oper-data']
+    xpaths = ['Cisco-IOS-XE-wireless-rrm-oper:rrm-oper-data', 'Cisco-IOS-XE-wireless-access-point-oper:access-point-oper-data']
 
     for msg in client.subscribe_xpaths(xpaths, encoding="JSON_IETF", sample_interval=(10**9) * interval, sub_mode='SAMPLE'):
         if msg.sync_response:

@@ -85,6 +85,7 @@ def main():
                 ## RRM
                 if um.path.elem[0].name == 'Cisco-IOS-XE-wireless-rrm-oper:rrm-oper-data':
                     jm = json.loads(um.val.json_ietf_val)
+                    jm['timestamp'] = ts
                     js = json.dumps(jm, indent=2)
                     file_path = '%s/rrm/%s' % (databasedir, fname)
                     rrm_path = '%s/rrm.json' % databasedir

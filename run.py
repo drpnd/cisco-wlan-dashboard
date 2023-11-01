@@ -103,6 +103,7 @@ def main():
                 ## AP
                 elif um.path.elem[0].name == 'Cisco-IOS-XE-wireless-access-point-oper:access-point-oper-data':
                     jm = json.loads(um.val.json_ietf_val)
+                    jm['timestamp'] = ts
                     js = json.dumps(jm, indent=2)
                     file_path = '%s/ap/%s' % (databasedir, fname)
                     ap_path = '%s/ap.json' % databasedir

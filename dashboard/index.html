@@ -144,12 +144,13 @@ function renderSlot(slot, slotinfo, elem) {
         // Stats
         let elem_stats = document.createElement('div');
         let tx_error = slotinfo['failed-count'] - slotinfo['prev-failed-count'];
-        let tx = slotinfo['tx-frame-count'] - slotinfo['prev-tx-frame-count'] + 0.01;
+        let tx = slotinfo['tx-frame-count'] - slotinfo['prev-tx-frame-count'];
+        let tx_error_rate = tx_error / (tx + tx_error + 0.01);
         elem_stats.className = 'apstats';
-        elem_stats.innerHTML = 'Tx error: ' + Math.round(100 * tx_error / tx) + '%<br/>'
+        elem_stats.innerHTML = 'Tx error: ' + Math.round(100 * tx_error_rate) + '%<br/>'
             + 'Util: ' + slotinfo['load']['tx'] + '/' + slotinfo['load']['rx'] + '/'
             + slotinfo['load']['cca'] + '/' + slotinfo['load']['rx-noise'];
-        if ( tx_error / tx >= 0.1 || slotinfo['load']['cca'] >= 50.0 ) {
+        if ( tx_error_rate >= 0.1 || slotinfo['load']['cca'] >= 50.0 ) {
             elem_stats.className += ' apstats-high';
         }
 

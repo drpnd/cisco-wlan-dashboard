@@ -176,6 +176,9 @@ async function update() {
     // Trying to get the AP
     response = await fetch(path1);
     json = await response.json();
+    let dt = new Date(json['timestamp'] / 1000 / 1000);
+    let span_updated = document.getElementById('updated');
+    span_updated.innerText = '(updated at ' + dt.toLocaleString() + ')';
 
     // Get AP's mac address list
     for ( let k in json['ap-name-mac-map'] ) {
@@ -269,7 +272,7 @@ window.addEventListener('load', init);
 </head>
 <body>
 
-<h1>AP Dashboard</h1>
+<h1>AP Dashboard <span id="updated"></span></h1>
 
 <div id="dashboard">
 </div>

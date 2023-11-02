@@ -96,6 +96,12 @@ function render(sortedAPs, APs) {
     // Render all APs
     for( let i in sortedAPs ) {
         let mac = sortedAPs[i];
+
+        // exclude monitor mode
+        if ( APs[mac]['slots'][0]['mode'] == 'radio-mode-monitor' && APs[mac]['slots'][1]['mode'] == 'radio-mode-monitor' ) {
+            continue;
+        }
+
         let elem = document.createElement('div');
         elem.className = 'apbox'
         let elem_title = document.createElement('div');

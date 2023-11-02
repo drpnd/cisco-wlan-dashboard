@@ -27,6 +27,7 @@ import json
 import os
 import errno
 import argparse
+import time
 
 ## Arguments
 parser = argparse.ArgumentParser()
@@ -73,52 +74,79 @@ def symlink_overwrite(f1, f2):
 Main routine
 """
 def main():
-    xpaths = ['Cisco-IOS-XE-wireless-rrm-oper:rrm-oper-data', 'Cisco-IOS-XE-wireless-access-point-oper:access-point-oper-data']
+    xpaths = ['Cisco-IOS-XE-wireless-rrm-oper:rrm-oper-data',
+              'Cisco-IOS-XE-wireless-access-point-oper:access-point-oper-data/ap-name-mac-map',
+              'Cisco-IOS-XE-wireless-access-point-oper:access-point-oper-data/radio-oper-data',
+              'Cisco-IOS-XE-wireless-access-point-oper:access-point-oper-data/radio-oper-stats']
 
-    for msg in client.subscribe_xpaths(xpaths, encoding="JSON_IETF", sample_interval=(10**9) * interval, sub_mode='SAMPLE'):
-        if msg.sync_response:
-            pass
-        else:
-            ts = msg.update.timestamp
-            fname = '%d.json' % ts
-            for um in msg.update.update:
+
+    while True:
+        obj_rrm = {}
+        obj_ap = {}
+        ts = None
+        response = client.get_xpaths(xpaths, encoding="JSON_IETF", data_type='STATE')
+        for msg in response.notification:
+            ts = msg.timestamp
+            for um in msg.update:
                 ## RRM
                 if um.path.elem[0].name == 'Cisco-IOS-XE-wireless-rrm-oper:rrm-oper-data':
                     jm = json.loads(um.val.json_ietf_val)
                     jm['timestamp'] = ts
-                    js = json.dumps(jm, indent=2)
-                    file_path = '%s/rrm/%s' % (databasedir, fname)
-                    rrm_path = '%s/rrm.json' % databasedir
-                    rrm_prev_path = '%s/rrm.prev.json' % databasedir
-                    with open(file_path, mode='w') as f:
-                        f.write(js)
-                    try:
-                        os.rename(rrm_path, rrm_prev_path)
-                    except OSError as e:
-                        if e.errno == errno.ENOENT:
-                            pass
-                        else:
-                            raise
-                    symlink_overwrite(os.path.relpath(file_path, databasedir), rrm_path)
+                    obj_rrm = jm
                 ## AP
                 elif um.path.elem[0].name == 'Cisco-IOS-XE-wireless-access-point-oper:access-point-oper-data':
-                    jm = json.loads(um.val.json_ietf_val)
-                    jm['timestamp'] = ts
-                    js = json.dumps(jm, indent=2)
-                    file_path = '%s/ap/%s' % (databasedir, fname)
-                    ap_path = '%s/ap.json' % databasedir
-                    ap_prev_path = '%s/ap.prev.json' % databasedir
-                    with open(file_path, mode='w') as f:
-                        f.write(js)
-                    try:
-                        os.rename(ap_path, ap_prev_path)
-                    except OSError as e:
-                        if e.errno == errno.ENOENT:
-                            pass
-                        else:
-                            raise
-                    symlink_overwrite(os.path.relpath(file_path, databasedir), ap_path)
+                    if um.path.elem[1].name == 'ap-name-mac-map':
+                        jm = dict(um.path.elem[1].key)
+                        jm.update(json.loads(um.val.json_ietf_val))
+                        if 'ap-name-mac-map' not in obj_ap:
+                            obj_ap['ap-name-mac-map'] = []
+                        obj_ap['ap-name-mac-map'].append(jm)
+                    elif um.path.elem[1].name == 'radio-oper-data':
+                        jm = dict(um.path.elem[1].key)
+                        jm.update(json.loads(um.val.json_ietf_val))
+                        if 'radio-oper-data' not in obj_ap:
+                            obj_ap['radio-oper-data'] = []
+                        obj_ap['radio-oper-data'].append(jm)
+                    elif um.path.elem[1].name == 'radio-oper-stats':
+                        jm = dict(um.path.elem[1].key)
+                        jm.update(json.loads(um.val.json_ietf_val))
+                        if 'radio-oper-stats' not in obj_ap:
+                            obj_ap['radio-oper-stats'] = []
+                        obj_ap['radio-oper-stats'].append(jm)
+        if ts is not None:
+            ## RRM
+            fname = '%d.json' % ts
+            js = json.dumps(obj_rrm, indent=2)
+            file_path = '%s/rrm/%s' % (databasedir, fname)
+            rrm_path = '%s/rrm.json' % databasedir
+            rrm_prev_path = '%s/rrm.prev.json' % databasedir
+            with open(file_path, mode='w') as f:
+                f.write(js)
+            try:
+                os.rename(rrm_path, rrm_prev_path)
+            except OSError as e:
+                if e.errno == errno.ENOENT:
+                    pass
+                else:
+                    raise
+            symlink_overwrite(os.path.relpath(file_path, databasedir), rrm_path)
+            ## AP
+            obj_ap['timestamp'] = ts
+            js = json.dumps(obj_ap, indent=2)
+            file_path = '%s/ap/%s' % (databasedir, fname)
+            ap_path = '%s/ap.json' % databasedir
+            ap_prev_path = '%s/ap.prev.json' % databasedir
+            with open(file_path, mode='w') as f:
+                f.write(js)
+            try:
+                os.rename(ap_path, ap_prev_path)
+            except OSError as e:
+                if e.errno == errno.ENOENT:
+                    pass
+                else:
+                    raise
+            symlink_overwrite(os.path.relpath(file_path, databasedir), ap_path)
+        time.sleep(interval)
 
 if __name__ == "__main__":
     main()
-

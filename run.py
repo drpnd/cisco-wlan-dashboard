@@ -76,6 +76,7 @@ Main routine
 def main():
     xpaths = ['Cisco-IOS-XE-wireless-rrm-oper:rrm-oper-data/rrm-measurement',
               'Cisco-IOS-XE-wireless-access-point-oper:access-point-oper-data/ap-name-mac-map',
+              'Cisco-IOS-XE-wireless-access-point-oper:access-point-oper-data/capwap-data',
               'Cisco-IOS-XE-wireless-access-point-oper:access-point-oper-data/radio-oper-data',
               'Cisco-IOS-XE-wireless-access-point-oper:access-point-oper-data/radio-oper-stats']
 
@@ -104,6 +105,12 @@ def main():
                         if 'ap-name-mac-map' not in obj_ap:
                             obj_ap['ap-name-mac-map'] = []
                         obj_ap['ap-name-mac-map'].append(jm)
+                    elif um.path.elem[1].name == 'capwap-data':
+                        jm = dict(um.path.elem[1].key)
+                        jm.update(json.loads(um.val.json_ietf_val))
+                        if 'capwap-data' not in obj_ap:
+                            obj_ap['capwap-data'] = []
+                        obj_ap['capwap-data'].append(jm)
                     elif um.path.elem[1].name == 'radio-oper-data':
                         jm = dict(um.path.elem[1].key)
                         jm.update(json.loads(um.val.json_ietf_val))

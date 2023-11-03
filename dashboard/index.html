@@ -182,6 +182,8 @@ async function update() {
     // Trying to get the AP
     response = await fetch(path1);
     json = await response.json();
+
+    // Show the updated date and time
     let dt = new Date(json['timestamp'] / 1000 / 1000);
     let span_updated = document.getElementById('updated');
     span_updated.innerText = '(updated at ' + dt.toLocaleString() + ')';

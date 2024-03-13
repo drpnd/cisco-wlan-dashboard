@@ -1,5 +1,9 @@
 body {
-    font: 10px sans-serif;
+    font-size: 10px;
+    font-family: 'Gill Sans', 'Verdana', sans-serif;
+}
+h1 {
+
 }
 div.apbox {
     margin: 0;

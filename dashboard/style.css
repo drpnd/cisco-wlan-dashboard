@@ -5,6 +5,9 @@ body {
 h1 {
 
 }
+div.updated-time {
+    text-align: right;
+}
 div.apbox {
     margin: 0;
     padding: 0;

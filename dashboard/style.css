@@ -3,7 +3,11 @@ body {
     font-family: 'Gill Sans', 'Verdana', sans-serif;
 }
 h1 {
-
+    font-size: 2em;
+    margin: 0;
+    padding: 5px 10px;
+    background-color: #333333;
+    color: #cccccc;
 }
 div.updated-time {
     text-align: right;

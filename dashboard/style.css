@@ -11,9 +11,10 @@ div.title-header {
     background-color: #333366;
 }
 h1 {
-    font-size: 2em;
-    margin: 0px 10px;
-    padding: 0;
+    font-weight: normal;
+    font-size: 3em;
+    margin: 0;
+    padding: 5px 10px;
     color: #cccccc;
 }
 div.updated-time {

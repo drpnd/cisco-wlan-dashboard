@@ -37,7 +37,7 @@ div.aptitle {
     width: 200px;
     height: 20px;
     font-family: sans-serif;;
-    font-weight: normal;
+    font-weight: bolder;
     color: white;
     background-color: #333333;
     font-size: 13px;
@@ -53,15 +53,20 @@ div.apslot {
     font-family: sans-serif;;
 }
 div.apchannel {
+    margin: 0;
+    padding: 0;
+    height: 20px;
     font-size: 12px;
     font-family: sans-serif;;
     padding-right: 5px;
     text-align: right;
 }
 div.apassocs {
-    padding: 2px;
+    margin: 0;
+    padding: 0;
     text-align: center;
     font-size: 25px;
+    height: 50px;
 }
 div.apstats {
     padding-left: 5px;

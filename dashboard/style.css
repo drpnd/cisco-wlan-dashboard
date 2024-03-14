@@ -15,9 +15,10 @@ h1 {
     font-size: 2em;
     margin: 0;
     padding: 5px 10px;
-    color: #cccccc;
+    color: #ffffff;
 }
 div.updated-time {
+    color: #333333;
     font-size: 1.5em;
     text-align: right;
 }

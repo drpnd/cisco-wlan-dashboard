@@ -90,5 +90,6 @@ div.apstats-high {
     color: #ffffff;
 }
 div.note {
+    clear: both;
     color: #cccccc;
 }

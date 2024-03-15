@@ -69,7 +69,9 @@ function render(sortedAPs, APs) {
 
         dashboard.appendChild(oelem);
     }
-    console.log(totalAssocs);
+
+    let span_total = document.getElementById('total-assocs');
+    span_total.innerText = '2.4 GHz: ' + totalAssocs[0] + ', 5 GHz: ' + totalAssocs[1];
 }
 function renderSlot(slot, slotinfo, elem) {
     if ( slotinfo !== undefined ) {
@@ -229,6 +231,7 @@ window.addEventListener('load', init);
 <h1>AP Dashboard</h1>
 </div>
 <div class="updated-time">
+ <span id="total-assocs"></span>
 <span id="updated"></span>
 </div>
 

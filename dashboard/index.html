@@ -30,6 +30,7 @@ function init() {
 function render(sortedAPs, APs) {
 
     let dashboard = document.getElementById('dashboard');
+    let totalAssocs = [0, 0];
 
     // Clear
     dashboard.innerHTML = '';
@@ -42,6 +43,8 @@ function render(sortedAPs, APs) {
         if ( APs[mac]['slots'][0]['mode'] == 'radio-mode-monitor' && APs[mac]['slots'][1]['mode'] == 'radio-mode-monitor' ) {
             continue;
         }
+        totalAssocs[0] += APs[mac]['slots'][0]['aid-user'];
+        totalAssocs[1] += APs[mac]['slots'][1]['aid-user'];
 
         let elem = document.createElement('div');
         elem.className = 'apbox'
@@ -66,6 +69,7 @@ function render(sortedAPs, APs) {
 
         dashboard.appendChild(oelem);
     }
+    console.log(totalAssocs);
 }
 function renderSlot(slot, slotinfo, elem) {
     if ( slotinfo !== undefined ) {

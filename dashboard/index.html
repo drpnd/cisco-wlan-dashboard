@@ -14,7 +14,8 @@ let path2 = './data/rrm.json';
 let intervalTimer;
 let APs = {};
 let sortedAPs = [];
-const threshold_assocs = 50;
+const threshold_assocs_high = 70;
+const threshold_assocs_mid = 50;
 
 /*
  * Initialize the dashboard
@@ -80,8 +81,10 @@ function renderSlot(slot, slotinfo, elem) {
             elem.className += ' apslot-down';
         } else if ( slotinfo['mode'] == 'radio-mode-monitor' ) {
             elem.className += ' apslot-down';
-        } else if ( slotinfo['aid-user'] >= threshold_assocs ) {
+        } else if ( slotinfo['aid-user'] >= threshold_assocs_high ) {
             elem.className += ' apslot-load-high';
+        } else if ( slotinfo['aid-user'] >= threshold_assocs_mid ) {
+            elem.className += ' apslot-load-middle';
         } else {
             elem.className += ' apslot-load-low';
         }

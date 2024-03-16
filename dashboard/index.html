@@ -17,6 +17,7 @@ let sortedAPs = [];
 const threshold_assocs_high = 70;
 const threshold_assocs_mid = 50;
 const threshold_cca = 50.0;
+const threshold_tx_error = 0.1;
 
 /*
  * Initialize the dashboard
@@ -107,7 +108,7 @@ function renderSlot(slot, slotinfo, elem) {
         elem_stats.innerHTML = 'Tx error: ' + Math.round(100 * tx_error_rate) + '%<br/>'
             + 'Util: ' + slotinfo['load']['tx'] + '/' + slotinfo['load']['rx'] + '/'
             + slotinfo['load']['cca'] + '/' + slotinfo['load']['rx-noise'];
-        if ( tx_error_rate >= 0.1 || slotinfo['load']['cca'] >= threshold_cca ) {
+        if ( tx_error_rate >= threshold_tx_error || slotinfo['load']['cca'] >= threshold_cca ) {
             elem_stats.className += ' apstats-high';
         }
 

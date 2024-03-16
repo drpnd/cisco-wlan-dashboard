@@ -16,6 +16,7 @@ let APs = {};
 let sortedAPs = [];
 const threshold_assocs_high = 70;
 const threshold_assocs_mid = 50;
+const threshold_cca = 50.0;
 
 /*
  * Initialize the dashboard
@@ -106,7 +107,7 @@ function renderSlot(slot, slotinfo, elem) {
         elem_stats.innerHTML = 'Tx error: ' + Math.round(100 * tx_error_rate) + '%<br/>'
             + 'Util: ' + slotinfo['load']['tx'] + '/' + slotinfo['load']['rx'] + '/'
             + slotinfo['load']['cca'] + '/' + slotinfo['load']['rx-noise'];
-        if ( tx_error_rate >= 0.1 || slotinfo['load']['cca'] >= 50.0 ) {
+        if ( tx_error_rate >= 0.1 || slotinfo['load']['cca'] >= threshold_cca ) {
             elem_stats.className += ' apstats-high';
         }
 
@@ -242,7 +243,7 @@ window.addEventListener('load', init);
 </div>
 
 <div class="note">
-* &ldquo;Util&rdquo; denotes: Tx / Rx / CCA Utilization / RX Noise.
+* &ldquo;Util&rdquo; denotes: Tx / Rx / CCA Utilization / Rx Noise.
 </div>
 
 </body>

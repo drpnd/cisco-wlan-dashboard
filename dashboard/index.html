@@ -18,6 +18,8 @@ const threshold_assocs_high = 70;
 const threshold_assocs_mid = 50;
 const threshold_cca = 50.0;
 const threshold_tx_error = 0.1;
+const threshold_min_tx_diff = 100;
+const surpress_24alarms = true;
 
 /*
  * Initialize the dashboard
@@ -108,8 +110,10 @@ function renderSlot(slot, slotinfo, elem) {
         elem_stats.innerHTML = 'Tx error: ' + Math.round(100 * tx_error_rate) + '%<br/>'
             + 'Util: ' + slotinfo['load']['tx'] + '/' + slotinfo['load']['rx'] + '/'
             + slotinfo['load']['cca'] + '/' + slotinfo['load']['rx-noise'];
-        if ( tx_error_rate >= threshold_tx_error || slotinfo['load']['cca'] >= threshold_cca ) {
-            elem_stats.className += ' apstats-high';
+        if ( (tx_error_rate >= threshold_tx_error && tx >= threshold_min_tx_diff) || slotinfo['load']['cca'] >= threshold_cca ) {
+            if ( slot == 0 && surpress_24alarms ) {
+                elem_stats.className += ' apstats-high';
+            }
         }
 
         elem.appendChild(elem_channel);

@@ -111,7 +111,7 @@ function renderSlot(slot, slotinfo, elem) {
             + 'Util: ' + slotinfo['load']['tx'] + '/' + slotinfo['load']['rx'] + '/'
             + slotinfo['load']['cca'] + '/' + slotinfo['load']['rx-noise'];
         if ( (tx_error_rate >= threshold_tx_error && tx >= threshold_min_tx_diff) || slotinfo['load']['cca'] >= threshold_cca ) {
-            if ( slot == 0 && surpress_24alarms ) {
+            if ( slot != 0 || !surpress_24alarms ) {
                 elem_stats.className += ' apstats-high';
             }
         }

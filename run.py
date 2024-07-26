@@ -62,8 +62,11 @@ Create a symbolic link (overwrite if exists)
 """
 def symlink_overwrite(f1, f2):
     try:
+        oldref = None
+        if os.path.isfile(f2):
+            oldref = os.path.realpath(f2)
         os.symlink(f1, f2)
-        return None
+        return oldref
     except OSError as e:
         if e.errno == errno.EEXIST:
             oldref = os.path.realpath(f2)

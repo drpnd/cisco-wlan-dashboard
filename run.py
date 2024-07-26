@@ -62,17 +62,11 @@ Create a symbolic link (overwrite if exists)
 """
 def symlink_overwrite(f1, f2):
     try:
-        oldref = None
-        if os.path.isfile(f2):
-            oldref = os.path.realpath(f2)
         os.symlink(f1, f2)
-        return oldref
     except OSError as e:
         if e.errno == errno.EEXIST:
-            oldref = os.path.realpath(f2)
             os.remove(f2)
             os.symlink(f1, f2)
-            return oldref
         else:
             raise e
 
@@ -139,6 +133,10 @@ def main():
             rrm_prev_path = '%s/rrm.prev.json' % databasedir
             with open(file_path, mode='w') as f:
                 f.write(js)
+            ## Get old reference
+            oldref = None
+            if os.path.islink(rrm_prev_path)
+                oldref = os.path.realpath(rrm_prev_path)
             try:
                 os.rename(rrm_path, rrm_prev_path)
             except OSError as e:
@@ -146,8 +144,8 @@ def main():
                     pass
                 else:
                     raise
-            ## Create a symbolic link and delete old one
-            oldref = symlink_overwrite(os.path.relpath(file_path, databasedir), rrm_path)
+            ## Create a symbolic link
+            symlink_overwrite(os.path.relpath(file_path, databasedir), rrm_path)
             if oldref:
                 os.remove(oldref)
             ## AP
@@ -158,6 +156,10 @@ def main():
             ap_prev_path = '%s/ap.prev.json' % databasedir
             with open(file_path, mode='w') as f:
                 f.write(js)
+            ## Get old reference
+            oldref = None
+            if os.path.islink(ap_prev_path)
+                oldref = os.path.realpath(ap_prev_path)
             try:
                 os.rename(ap_path, ap_prev_path)
             except OSError as e:
@@ -165,8 +167,8 @@ def main():
                     pass
                 else:
                     raise
-            ## Create a symbolic link and delete old one
-            oldref = symlink_overwrite(os.path.relpath(file_path, databasedir), ap_path)
+            ## Create a symbolic link
+            symlink_overwrite(os.path.relpath(file_path, databasedir), ap_path)
             if oldref:
                 os.remove(oldref)
         time.sleep(interval)

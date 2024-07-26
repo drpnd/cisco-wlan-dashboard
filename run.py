@@ -135,7 +135,7 @@ def main():
                 f.write(js)
             ## Get old reference
             oldref = None
-            if os.path.islink(rrm_prev_path)
+            if os.path.islink(rrm_prev_path):
                 oldref = os.path.realpath(rrm_prev_path)
             try:
                 os.rename(rrm_path, rrm_prev_path)
@@ -158,7 +158,7 @@ def main():
                 f.write(js)
             ## Get old reference
             oldref = None
-            if os.path.islink(ap_prev_path)
+            if os.path.islink(ap_prev_path):
                 oldref = os.path.realpath(ap_prev_path)
             try:
                 os.rename(ap_path, ap_prev_path)

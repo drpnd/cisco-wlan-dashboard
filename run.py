@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Copyright (c) 2023 Hirochika Asai <asai@jar.jp>
+Copyright (c) 2023-2024 Hirochika Asai <asai@jar.jp>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -63,10 +63,13 @@ Create a symbolic link (overwrite if exists)
 def symlink_overwrite(f1, f2):
     try:
         os.symlink(f1, f2)
+        return None
     except OSError as e:
         if e.errno == errno.EEXIST:
+            oldref = os.path.realpath(f2)
             os.remove(f2)
             os.symlink(f1, f2)
+            return oldref
         else:
             raise e
 
@@ -140,7 +143,10 @@ def main():
                     pass
                 else:
                     raise
-            symlink_overwrite(os.path.relpath(file_path, databasedir), rrm_path)
+            ## Create a symbolic link and delete old one
+            oldref = symlink_overwrite(os.path.relpath(file_path, databasedir), rrm_path)
+            if oldref:
+                os.remove(oldref)
             ## AP
             obj_ap['timestamp'] = ts
             js = json.dumps(obj_ap, indent=2)
@@ -156,7 +162,10 @@ def main():
                     pass
                 else:
                     raise
-            symlink_overwrite(os.path.relpath(file_path, databasedir), ap_path)
+            ## Create a symbolic link and delete old one
+            oldref = symlink_overwrite(os.path.relpath(file_path, databasedir), ap_path)
+            if oldref:
+                os.remove(oldref)
         time.sleep(interval)
 
 if __name__ == "__main__":

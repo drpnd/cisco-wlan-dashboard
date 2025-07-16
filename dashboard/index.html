@@ -35,7 +35,7 @@ function init() {
 function render(sortedAPs, APs) {
 
     let dashboard = document.getElementById('dashboard');
-    let totalAssocs = [0, 0];
+    let totalAssocs = [0, 0, 0];
 
     // Clear
     dashboard.innerHTML = '';
@@ -45,11 +45,22 @@ function render(sortedAPs, APs) {
         let mac = sortedAPs[i];
 
         // exclude monitor mode
-        if ( APs[mac]['slots'][0]['mode'] == 'radio-mode-monitor' && APs[mac]['slots'][1]['mode'] == 'radio-mode-monitor' ) {
+        if ( APs[mac]['slots'][0]['mode'] == 'radio-mode-monitor'
+            && APs[mac]['slots'][1]['mode'] == 'radio-mode-monitor' ) {
             continue;
         }
-        totalAssocs[0] += APs[mac]['slots'][0]['aid-user'];
-        totalAssocs[1] += APs[mac]['slots'][1]['aid-user'];
+        for ( let j = 0; j < 3; j++ ) {
+            if ( APs[mac]['slots'][j] !== undefined && APs[mac]['slots'][j]['type'] == 'radio-80211abgn' ) {
+                // 2.4 GHz
+                totalAssocs[0] += APs[mac]['slots'][j]['aid-user'];
+            } else if ( APs[mac]['slots'][j] !== undefined && APs[mac]['slots'][j]['type'] == 'radio-80211a' ) {
+                // 5 GHz
+                totalAssocs[1] += APs[mac]['slots'][j]['aid-user'];
+            } else if ( APs[mac]['slots'][j] !== undefined && APs[mac]['slots'][j]['type'] == 'radio-80211-6ghz' ) {
+                // 6 GHz
+                totalAssocs[2] += APs[mac]['slots'][j]['aid-user'];
+            }
+        }
 
         let elem = document.createElement('div');
         elem.className = 'apbox'
@@ -61,12 +72,16 @@ function render(sortedAPs, APs) {
         elem_slot0.className = 'apslot';
         let elem_slot1 = document.createElement('div');
         elem_slot1.className = 'apslot';
+        let elem_slot2 = document.createElement('div');
+        elem_slot2.className = 'apslot';
 
         renderSlot(0, APs[mac]['slots'][0], elem_slot0);
         renderSlot(1, APs[mac]['slots'][1], elem_slot1);
+        renderSlot(2, APs[mac]['slots'][2], elem_slot2);
 
         elem.appendChild(elem_slot0);
         elem.appendChild(elem_slot1);
+        elem.appendChild(elem_slot2);
 
         let oelem = document.createElement('div');
         oelem.className = 'apobox';
@@ -76,7 +91,7 @@ function render(sortedAPs, APs) {
     }
 
     let span_total = document.getElementById('total-assocs');
-    span_total.innerText = '2.4 GHz: ' + totalAssocs[0] + ', 5 GHz: ' + totalAssocs[1];
+    span_total.innerText = '2.4 GHz: ' + totalAssocs[0] + ', 5 GHz: ' + totalAssocs[1] + ', 6 GHz: ' + totalAssocs[2];
 }
 function renderSlot(slot, slotinfo, elem) {
     if ( slotinfo !== undefined ) {
@@ -157,6 +172,9 @@ async function update() {
         }
     }
 
+    // num-radio-slots
+    // radio-type radio-80211a radio-80211-6ghz radio-80211abgn
+
     // Get the radio operation data
     for ( let k in json['radio-oper-data'] ) {
         if  ( json['radio-oper-data'][k]['wtp-mac'] in APs ) {
@@ -166,6 +184,7 @@ async function update() {
             APs[json['radio-oper-data'][k]['wtp-mac']]['slots'][json['radio-oper-data'][k]['radio-slot-id']] = {
                 'state': json['radio-oper-data'][k]['oper-state'],
                 'mode': json['radio-oper-data'][k]['radio-mode'],
+                'type': json['radio-oper-data'][k]['radio-type'],
                 'band': json['radio-oper-data'][k]['current-active-band'],
                 'antenna-gain': json['radio-oper-data'][k]['antenna-gain'],
                 'channel': json['radio-oper-data'][k]['phy-ht-cfg']['cfg-data']['curr-freq'],

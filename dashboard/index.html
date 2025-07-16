@@ -63,11 +63,11 @@ function render(sortedAPs, APs) {
         }
 
         let elem = document.createElement('div');
+        let elem_title = document.createElement('div');
+        elem_title.innerText = APs[mac]['name'] + ' @ ' + APs[mac]['location'];
         if ( APs[mac]['num-radio-slots'] == 2 ) {
             elem.className = 'apbox'
-            let elem_title = document.createElement('div');
             elem_title.className = 'aptitle';
-            elem_title.innerText = APs[mac]['name'] + ' @ ' + APs[mac]['location'];
             elem.appendChild(elem_title);
             let elem_slot0 = document.createElement('div');
             elem_slot0.className = 'apslot';
@@ -81,9 +81,7 @@ function render(sortedAPs, APs) {
             elem.appendChild(elem_slot1);
         } else if ( APs[mac]['num-radio-slots'] == 3 ) {
             elem.className = 'apbox3'
-            let elem_title = document.createElement('div');
             elem_title.className = 'aptitle3';
-            elem_title.innerText = APs[mac]['name'] + ' @ ' + APs[mac]['location'];
             elem.appendChild(elem_title);
             let elem_slot0 = document.createElement('div');
             elem_slot0.className = 'apslot';

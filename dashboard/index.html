@@ -63,25 +63,44 @@ function render(sortedAPs, APs) {
         }
 
         let elem = document.createElement('div');
-        elem.className = 'apbox'
-        let elem_title = document.createElement('div');
-        elem_title.className = 'aptitle';
-        elem_title.innerText = APs[mac]['name'] + ' @ ' + APs[mac]['location'];
-        elem.appendChild(elem_title);
-        let elem_slot0 = document.createElement('div');
-        elem_slot0.className = 'apslot';
-        let elem_slot1 = document.createElement('div');
-        elem_slot1.className = 'apslot';
-        let elem_slot2 = document.createElement('div');
-        elem_slot2.className = 'apslot';
+        if ( APs[mac]['num-radio-slots'] == 2 ) {
+            elem.className = 'apbox'
+            let elem_title = document.createElement('div');
+            elem_title.className = 'aptitle';
+            elem_title.innerText = APs[mac]['name'] + ' @ ' + APs[mac]['location'];
+            elem.appendChild(elem_title);
+            let elem_slot0 = document.createElement('div');
+            elem_slot0.className = 'apslot';
+            let elem_slot1 = document.createElement('div');
+            elem_slot1.className = 'apslot';
 
-        renderSlot(0, APs[mac]['slots'][0], elem_slot0);
-        renderSlot(1, APs[mac]['slots'][1], elem_slot1);
-        renderSlot(2, APs[mac]['slots'][2], elem_slot2);
+            renderSlot(0, APs[mac]['slots'][0], elem_slot0);
+            renderSlot(1, APs[mac]['slots'][1], elem_slot1);
 
-        elem.appendChild(elem_slot0);
-        elem.appendChild(elem_slot1);
-        elem.appendChild(elem_slot2);
+            elem.appendChild(elem_slot0);
+            elem.appendChild(elem_slot1);
+        } else if ( APs[mac]['num-radio-slots'] == 3 ) {
+            elem.className = 'apbox3'
+            let elem_title = document.createElement('div');
+            elem_title.className = 'aptitle3';
+            elem_title.innerText = APs[mac]['name'] + ' @ ' + APs[mac]['location'];
+            elem.appendChild(elem_title);
+            let elem_slot0 = document.createElement('div');
+            elem_slot0.className = 'apslot';
+            let elem_slot1 = document.createElement('div');
+            elem_slot1.className = 'apslot';
+            let elem_slot2 = document.createElement('div');
+            elem_slot2.className = 'apslot';
+
+            renderSlot(0, APs[mac]['slots'][0], elem_slot0);
+            renderSlot(1, APs[mac]['slots'][1], elem_slot1);
+            renderSlot(2, APs[mac]['slots'][2], elem_slot2);
+
+            elem.appendChild(elem_slot0);
+            elem.appendChild(elem_slot1);
+            elem.appendChild(elem_slot2);
+
+        }
 
         let oelem = document.createElement('div');
         oelem.className = 'apobox';
@@ -162,18 +181,18 @@ async function update() {
     // Get AP's mac address list
     for ( let k in json['ap-name-mac-map'] ) {
         sortedAPs.push(json['ap-name-mac-map'][k]['wtp-mac']);
-        APs[json['ap-name-mac-map'][k]['wtp-mac']] = {'name': json['ap-name-mac-map'][k]['wtp-name']};
+        APs[json['ap-name-mac-map'][k]['wtp-mac']] = {
+            'name': json['ap-name-mac-map'][k]['wtp-name']
+        };
     }
 
     // Get the location information
     for ( let k in json['capwap-data'] ) {
         if  ( json['capwap-data'][k]['wtp-mac'] in APs ) {
             APs[json['capwap-data'][k]['wtp-mac']]['location'] = json['capwap-data'][k]['ap-location']['location'];
+            APs[json['capwap-data'][k]['wtp-mac']]['num-radio-slots'] = json['capwap-data'][k]['num-radio-slots'];
         }
     }
-
-    // num-radio-slots
-    // radio-type radio-80211a radio-80211-6ghz radio-80211abgn
 
     // Get the radio operation data
     for ( let k in json['radio-oper-data'] ) {

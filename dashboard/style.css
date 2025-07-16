@@ -26,12 +26,31 @@ div.updated-time {
 div.apbox {
     margin: 0;
     padding: 0;
-    width: 300px;
+    width: 200px;
     height: 100px;
     float: left;
     border: 1px solid #333333;
 }
 div.aptitle {
+    margin: 0;
+    padding: 0 2px;
+    width: 200px;
+    height: 20px;
+    font-family: sans-serif;;
+    font-weight: normal;
+    color: white;
+    background-color: #333333;
+    font-size: 13px;
+}
+div.apbox3 {
+    margin: 0;
+    padding: 0;
+    width: 300px;
+    height: 100px;
+    float: left;
+    border: 1px solid #333333;
+}
+div.aptitle3 {
     margin: 0;
     padding: 0 2px;
     width: 300px;

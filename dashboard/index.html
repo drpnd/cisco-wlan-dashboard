@@ -51,7 +51,7 @@ function render(sortedAPs, APs) {
             continue;
         }
         for ( let j = 0; j < 3; j++ ) {
-            if ( APs[mac]['slots'][j] !== undefined && APs[mac]['slots'][j]['type'] == 'radio-80211abgn' ) {
+            if ( APs[mac]['slots'][j] !== undefined && APs[mac]['slots'][j]['type'] == 'radio-80211bg' ) {
                 // 2.4 GHz
                 totalAssocs[0] += APs[mac]['slots'][j]['aid-user'];
             } else if ( APs[mac]['slots'][j] !== undefined && APs[mac]['slots'][j]['type'] == 'radio-80211a' ) {

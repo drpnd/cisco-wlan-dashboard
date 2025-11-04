@@ -51,7 +51,19 @@ function render(sortedAPs, APs) {
             continue;
         }
         for ( let j = 0; j < 3; j++ ) {
-            if ( APs[mac]['slots'][j] !== undefined && APs[mac]['slots'][j]['type'] == 'radio-80211bg' ) {
+            if ( APs[mac]['slots'][j] !== undefined && APs[mac]['slots'][j]['type'] == 'radio-80211abgn' ) {
+                // Flex radio
+                if ( APs[mac]['slots'][j]['current-active-band'] == 'dot11-2-dot-4-ghz-band' ) {
+                    // 2.4 GHz
+                    totalAssocs[0] += APs[mac]['slots'][j]['aid-user'];
+                } else if ( APs[mac]['slots'][j]['current-active-band'] == 'dot11-5-ghz-band' ) {
+                    // 5 GHz
+                    totalAssocs[1] += APs[mac]['slots'][j]['aid-user'];
+                } else if ( APs[mac]['slots'][j]['current-active-band'] == 'dot11-6-ghz-band' ) {
+                    // 6 GHz
+                    totalAssocs[2] += APs[mac]['slots'][j]['aid-user'];
+                }
+            } else if ( APs[mac]['slots'][j] !== undefined && APs[mac]['slots'][j]['type'] == 'radio-80211bg' ) {
                 // 2.4 GHz
                 totalAssocs[0] += APs[mac]['slots'][j]['aid-user'];
             } else if ( APs[mac]['slots'][j] !== undefined && APs[mac]['slots'][j]['type'] == 'radio-80211a' ) {

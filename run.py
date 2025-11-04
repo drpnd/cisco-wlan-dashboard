@@ -71,6 +71,15 @@ def symlink_overwrite(f1, f2):
             raise e
 
 """
+Protocol buffer output to a dictionary
+"""
+def seq2dict(m):
+    d = {}
+    for e in m:
+        d[e.key] = e.value
+    return d
+
+"""
 Main routine
 """
 def main():
@@ -92,7 +101,7 @@ def main():
                 ## RRM
                 if um.path.elem[0].name == 'Cisco-IOS-XE-wireless-rrm-oper:rrm-oper-data':
                     if um.path.elem[1].name == 'rrm-measurement':
-                        jm = dict(um.path.elem[1].key)
+                        jm = seq2dict(um.path.elem[1].key)
                         jm.update(json.loads(um.val.json_ietf_val))
                         if 'rrm-measurement' not in obj_rrm:
                             obj_rrm['rrm-measurement'] = []
@@ -100,25 +109,25 @@ def main():
                 ## AP
                 elif um.path.elem[0].name == 'Cisco-IOS-XE-wireless-access-point-oper:access-point-oper-data':
                     if um.path.elem[1].name == 'ap-name-mac-map':
-                        jm = dict(um.path.elem[1].key)
+                        jm = seq2dict(um.path.elem[1].key)
                         jm.update(json.loads(um.val.json_ietf_val))
                         if 'ap-name-mac-map' not in obj_ap:
                             obj_ap['ap-name-mac-map'] = []
                         obj_ap['ap-name-mac-map'].append(jm)
                     elif um.path.elem[1].name == 'capwap-data':
-                        jm = dict(um.path.elem[1].key)
+                        jm = seq2dict(um.path.elem[1].key)
                         jm.update(json.loads(um.val.json_ietf_val))
                         if 'capwap-data' not in obj_ap:
                             obj_ap['capwap-data'] = []
                         obj_ap['capwap-data'].append(jm)
                     elif um.path.elem[1].name == 'radio-oper-data':
-                        jm = dict(um.path.elem[1].key)
+                        jm = seq2dict(um.path.elem[1].key)
                         jm.update(json.loads(um.val.json_ietf_val))
                         if 'radio-oper-data' not in obj_ap:
                             obj_ap['radio-oper-data'] = []
                         obj_ap['radio-oper-data'].append(jm)
                     elif um.path.elem[1].name == 'radio-oper-stats':
-                        jm = dict(um.path.elem[1].key)
+                        jm = seq2dict(um.path.elem[1].key)
                         jm.update(json.loads(um.val.json_ietf_val))
                         if 'radio-oper-stats' not in obj_ap:
                             obj_ap['radio-oper-stats'] = []
